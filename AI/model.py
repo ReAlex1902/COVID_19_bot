@@ -35,7 +35,5 @@ class Net(nn.Module):
 
 
 def get_model(filename = "net.pt"):
-    import pickle
-    import torch
     model = torch.load(filename)
     return model
