@@ -14,11 +14,14 @@ class Net(nn.Module):
         """
         Helps to return not the number of prediction
         """
-        CONSTANT = - 1.2             ## constant number to compare hthe prediction with
+        CONSTANT = -1.2             ## constant number to compare hthe prediction with
         # lst = torch.Tensor(lst)     ## transforming to pytorch tensor
         # result = self.forward(lst)      ##
         lst = [1 if elem[1] > CONSTANT else int(torch.argmax(elem)) for elem in result]    ## regulation of predictions
         return lst
+
+    def return_proba(self, result):
+        return torch.exp(result)
 
     def forward(self, X):
         X = torch.Tensor(X)
@@ -30,12 +33,10 @@ class Net(nn.Module):
         X = self.fc12(X)
         result = F.log_softmax(X, dim = 1)           ## writing results using log_softmax
 
-        return (self.return_one_number(result), result)     ## returning tuple with list of predictions and tensor of
+        return (self.return_proba(result))     ## returning tuple with list of predictions and tensor of
                                                             ## log_softmax probabilities
 
 
 def get_model(filename = "net.pt"):
-    import pickle
-    import torch
     model = torch.load(filename)
     return model
