@@ -36,30 +36,38 @@ def test(update, context):
 	context.user_data['is_testing'] = True
 	context.user_data['question_index'] = 0
 	context.user_data['answers'] = {}
-	update.message.reply_text(questions.questions[0].question_text)
+	id = update.message.reply_text(questions.questions[0].question_text)
+	print('bot message id is ', id.message_id)
 
 def echo(update, context):
 	print('Echo callback has been called')
 	if 'is_testing' in context.user_data and context.user_data['is_testing'] == True:
+		message = update.message
+		answer = None
+		if update.callback_query != None:
+			update.callback_query.answer(text='Ответ принят', show_alrt=True)
+			answer = int(update.callback_query.data)
+			message = update.callback_query.message
+		else:
+			answer = update.message.text
 		question_index = context.user_data['question_index']
-		answer = update.message.text
 		if questions.questions[question_index].answer_type == 'bool':
-			answer = questions.get_bool_value(answer)
+			#answer = questions.get_bool_value(answer)
 			if answer == -1:
-				update.message.reply_text('Неверное значение. Напишите да или нет')
+				message.reply_text('Неверное значение. Напишите да или нет')
 				return
 		context.user_data['answers'][questions.questions[question_index].internal_name] = answer
 		question_index = question_index + 1
 		context.user_data['question_index'] = question_index
 		if question_index <= len(questions.questions) - 1:
 			if questions.questions[question_index].answer_type == 'bool':
-				keyboard = [[InlineKeyboardButton("Да", callback_data='1'), InlineKeyboardButton("Нет", callback_data='0')]]
+				keyboard = [[InlineKeyboardButton("Да", callback_data=1), InlineKeyboardButton("Нет", callback_data=0)]]
 				reply_markup = InlineKeyboardMarkup(keyboard)
-				update.message.reply_text(questions.questions[question_index].question_text, reply_markup=reply_markup)
+				message.edit_text(questions.questions[question_index].question_text, reply_markup=reply_markup)
 			else:
-				update.message.reply_text(questions.questions[question_index].question_text)
+				message.edit_text(questions.questions[question_index].question_text)
 		else:
-			update.message.reply_text('Тестирование закончено')
+			message.edit_text('Тестирование закончено')
 			context.user_data['is_testing'] = False
 			lst = create_data_list(context.user_data['answers'])
 			load_model = get_model()
@@ -67,7 +75,7 @@ def echo(update, context):
 			prediction = round(result[0][1].item() * 100, 2)
 			report = create_report(prediction, {})
 			print('prediction', result[0][1].item())
-			update.message.reply_text(report)
+			message.edit_text(report)
 	else:
 		update.message.reply_text('Напичатайте /test, что бы начать тестирование')
 
@@ -86,6 +94,8 @@ def main():
 	test_handler = CommandHandler('test', test)
 	disp.add_handler(test_handler)
 	disp.add_error_handler(error)
+	callback_query_handler = CallbackQueryHandler(echo)
+	disp.add_handler(callback_query_handler)
 	updater.start_polling()
 	updater.idle()
 
