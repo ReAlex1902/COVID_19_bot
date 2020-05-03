@@ -17,10 +17,10 @@ def create_data_list(dic):
 	return lst
 
 def create_report(prediction, answers):
-	if prediction == 1:
-		return 'Болен.'
-	else:
-		return 'Здоров.'
+	report = 'Вы больны с вероятностью '
+	report += str(prediction)
+	report += '%'
+	return report
 
 # Handlers
 def start(update, context): # handles /start command which is sent automaticly when you write to the bot
@@ -60,8 +60,9 @@ def echo(update, context):
 			lst = create_data_list(context.user_data['answers'])
 			load_model = get_model()
 			result = load_model(lst)
-			report = create_report(result[0][0], {})
-			print('prediction', result[0][0])
+			prediction = round(result[0][1].item() * 100, 2)
+			report = create_report(prediction, {})
+			print('prediction', result[0][1].item())
 			update.message.reply_text(report)
 	else:
 		print('not testing')
