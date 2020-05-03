@@ -1,6 +1,7 @@
 from model import *
 import questions # A module which holds all questions. Then they will be moved to a database
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, DictPersistence
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, DictPersistence, CallbackQueryHandler
 import config
 # helpers
 # function create_list creates list putting all data from the dictionary in the right order. Then this list is sent to the model
@@ -39,9 +40,7 @@ def test(update, context):
 
 def echo(update, context):
 	print('Echo callback has been called')
-	print('user data: ', context.user_data)
 	if 'is_testing' in context.user_data and context.user_data['is_testing'] == True:
-		print('testing')
 		question_index = context.user_data['question_index']
 		answer = update.message.text
 		if questions.questions[question_index].answer_type == 'bool':
@@ -53,7 +52,12 @@ def echo(update, context):
 		question_index = question_index + 1
 		context.user_data['question_index'] = question_index
 		if question_index <= len(questions.questions) - 1:
-			update.message.reply_text(questions.questions[question_index].question_text)
+			if questions.questions[question_index].answer_type == 'bool':
+				keyboard = [[InlineKeyboardButton("Да", callback_data='1'), InlineKeyboardButton("Нет", callback_data='0')]]
+				reply_markup = InlineKeyboardMarkup(keyboard)
+				update.message.reply_text(questions.questions[question_index].question_text, reply_markup=reply_markup)
+			else:
+				update.message.reply_text(questions.questions[question_index].question_text)
 		else:
 			update.message.reply_text('Тестирование закончено')
 			context.user_data['is_testing'] = False
@@ -65,8 +69,10 @@ def echo(update, context):
 			print('prediction', result[0][1].item())
 			update.message.reply_text(report)
 	else:
-		print('not testing')
 		update.message.reply_text('Напичатайте /test, что бы начать тестирование')
+
+def error(update, context):
+	print('error: ', context.error)
 
 # Bot inicialization
 def main():
@@ -79,6 +85,7 @@ def main():
 	disp.add_handler(echo_handler)
 	test_handler = CommandHandler('test', test)
 	disp.add_handler(test_handler)
+	disp.add_error_handler(error)
 	updater.start_polling()
 	updater.idle()
 
