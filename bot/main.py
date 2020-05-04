@@ -1,9 +1,10 @@
-from model import *
+import pickle
 import questions # A module which holds all questions. Then they will be moved to a database
 import keyboards
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, DictPersistence, CallbackQueryHandler
 import config
+
 # helpers
 # function create_list creates list putting all data from the dictionary in the right order. Then this list is sent to the model
 def create_data_list(dic):
@@ -75,9 +76,8 @@ def echo(update, context):
 			context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text='Тестирование завершено')
 			context.user_data['is_testing'] = False
 			lst = create_data_list(context.user_data['answers'])
-			print('data list', lst)
-			load_model = get_model()
-			result = load_model(lst)
+			rf = pickle.load(open('Random_Forest.sav', 'rb'))
+			result = rf.predict_proba([lst])
 			prediction = round(result[0][1].item() * 100, 2)
 			report = create_report(prediction, {})
 			print('prediction', result[0][1].item())
