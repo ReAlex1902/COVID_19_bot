@@ -1,7 +1,7 @@
 import pickle
 import questions # A module which holds all questions. Then they will be moved to a database
 import keyboards
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, DictPersistence, CallbackQueryHandler
 import config
 
@@ -14,15 +14,17 @@ def create_data_list(dic):
 	lst.append(dic['sore_throat'])
 	lst.append(dic['shortness_of_breath'])
 	lst.append(dic['head_ache'])
-	lst.append(dic['age'])
+	lst.append(int(dic['age']))
 	lst.append(dic['gender'])
-	lst.append(0) # I hav no clue what the last parameter is. When I figure it out. I'll add it to the questions. For now it's just zero
+	lst.append(dic['additional_factor'])
 	return lst
 
 def create_report(prediction, answers):
 	report = 'Вы больны с вероятностью '
 	report += str(prediction)
 	report += '%'
+	if prediction > 30:
+		report += 'Рекомендации Вероятность того, что вы инфецированы слишком высока. Что делать: 1. Сохранять спокойствие. 100% гарантии вам может дать только тест. \n 2. Ждать звонка от врача. Втечении 24 часов с вами свяжется врач. \n 3. Исключить любые контакты с родственниками и людьми вокруг.'
 	return report
 
 # Handlers
@@ -39,9 +41,9 @@ def start(update, context): # handles /start command which is sent automaticly w
 	/help - справка по боту. \n\n \
 	Берегите себя.')
 
-def test(update, context):
+def test(update, context): # handles /test command
 	update.message.reply_text('Тестирование начато.')
-	update.message.reply_text('На вопросы ниже отвечайте да или нет. Если явно не сказано другое. Регистр ответов не важен')
+	update.message.reply_text('На вопросы ниже отвечайте по шкале от 0 до 10. Если явно не сказано другое.')
 	context.user_data['is_testing'] = True
 	context.user_data['question_index'] = 0
 	context.user_data['answers'] = {}
@@ -51,7 +53,7 @@ def test(update, context):
 	context.chat_data['message_id'] = message_id
 	context.chat_data['chat_id'] = chat_id
 
-def echo(update, context):
+def echo(update, context): # Handles all messages and buttons
 	print('Echo callback has been called')
 	if 'is_testing' in context.user_data and context.user_data['is_testing'] == True:
 		message = update.message
@@ -62,6 +64,8 @@ def echo(update, context):
 			message = update.callback_query.message
 		else:
 			answer = update.message.text
+			context.chat_data['message_id'] = -1
+			context.chat_data['chat_id'] = -1
 		question_index = context.user_data['question_index']
 		if questions.questions[question_index].answer_type == 'bool':
 			#answer = questions.get_bool_value(answer)
@@ -73,16 +77,21 @@ def echo(update, context):
 		context.user_data['question_index'] = question_index
 		if question_index <= len(questions.questions) - 1:
 			if questions.questions[question_index].answer_type == 'bool':
-				#keyboard = [[InlineKeyboardButton("1", callback_data=1), InlineKeyboardButton("2", callback_data=0), InlineKeyboardButton('3', callback_data=3)], [InlineKeyboardButton("4", callback_data=4), InlineKeyboardButton('5', callback_data=5), InlineKeyboardButton('6', callback_data=6)], [InlineKeyboardButton('7', callback_data=7), InlineKeyboardButton('8', callback_data=8), InlineKeyboardButton('9', callback_data=9)], [InlineKeyboardButton('10', callback_data=10), InlineKeyboardButton('0', callback_data=0)]]
 				keyboard = questions.questions[question_index].keyboard
 				reply_markup = InlineKeyboardMarkup(keyboard)
-				context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text=questions.questions[question_index].question_text, reply_markup=reply_markup)
+				if context.chat_data['message_id'] != -1 and context.chat_data['chat_id'] != -1:
+					context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text=questions.questions[question_index].question_text, reply_markup=reply_markup)
+				else:
+					msg = message.reply_text(questions.questions[question_index].question_text, reply_markup=reply_markup)
+					context.chat_data['chat_id'] = msg.chat_id
+					context.chat_data['message_id'] = msg.message_id
 			else:
 				context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text=questions.questions[question_index].question_text)
 		else:
 			context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text='Тестирование завершено')
 			context.user_data['is_testing'] = False
 			lst = create_data_list(context.user_data['answers'])
+			print([lst])
 			rf = pickle.load(open('Random_Forest.sav', 'rb'))
 			result = rf.predict_proba([lst])
 			prediction = round(result[0][1].item() * 100, 2)

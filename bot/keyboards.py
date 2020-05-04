@@ -5,4 +5,5 @@ range_selector = keyboard.create_keyboard(buttons={'0': '0', '1': '1', '2': '2',
 
 temperature_selector = keyboard.create_keyboard(buttons={'0': '36-36,4', '1': '36,4-36,8', '2': '36,8-37,2', '3': '37,2-37,6', '5': '37,6-38', '5': '38-38,4', '6': '38,4-38,8', '7': '38,8-39,2', '9': '39,2-39,6', '9': '39,6-40', '10': '40 и выше'}, num_buttons_per_row=3)
 
+additional_factors = keyboard.create_keyboard(buttons={'1': 'Были за границей', '2': 'Контактировали с заболевшим', '0': 'Ничего из выше перечисленного'}, num_buttons_per_row=1)
 

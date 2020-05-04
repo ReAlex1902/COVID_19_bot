@@ -10,6 +10,7 @@ questions.append(question.Question('Есть ли у вас головная б�
 questions.append(question.Question('Болит ли у вас горло? (0 - не болит совсем, 10 - сильная боль)', 'sore_throat', 'bool', keyboards.range_selector))
 questions.append(question.Question('Укажите ваш возраст', 'age', 'text'))
 questions.append(question.Question('Какой ваш пол?', 'gender', 'bool', keyboards.gender_selector))
+questions.append(question.Question('Выберите одно утверждение из списка ниже, которое относится к вам', 'additional_factor', 'bool', keyboards.additional_factors))
 
 
 #  function get_bool_value converts words to boolean values. For example, yes or YES or Yes will be converted to 1 or True
