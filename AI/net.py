@@ -29,7 +29,7 @@ class Net(nn.Module):
 
         X = F.relu(self.fc1(X))
         for layer in self.layers:           ## predicting
-            X = layer(X)
+            X = F.relu(layer(X))
         X = self.fc12(X)
         result = F.log_softmax(X, dim = 1)           ## writing results using log_softmax
 
