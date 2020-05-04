@@ -1,5 +1,6 @@
 from model import *
 import questions # A module which holds all questions. Then they will be moved to a database
+import keyboards
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, DictPersistence, CallbackQueryHandler
 import config
@@ -64,7 +65,8 @@ def echo(update, context):
 		context.user_data['question_index'] = question_index
 		if question_index <= len(questions.questions) - 1:
 			if questions.questions[question_index].answer_type == 'bool':
-				keyboard = [[InlineKeyboardButton("1", callback_data=1), InlineKeyboardButton("2", callback_data=0), InlineKeyboardButton('3', callback_data=3)], [InlineKeyboardButton("4", callback_data=4), InlineKeyboardButton('5', callback_data=5), InlineKeyboardButton('6', callback_data=6)], [InlineKeyboardButton('7', callback_data=7), InlineKeyboardButton('8', callback_data=8), InlineKeyboardButton('9', callback_data=9)], [InlineKeyboardButton('10', callback_data=10), InlineKeyboardButton('0', callback_data=0)]]
+				#keyboard = [[InlineKeyboardButton("1", callback_data=1), InlineKeyboardButton("2", callback_data=0), InlineKeyboardButton('3', callback_data=3)], [InlineKeyboardButton("4", callback_data=4), InlineKeyboardButton('5', callback_data=5), InlineKeyboardButton('6', callback_data=6)], [InlineKeyboardButton('7', callback_data=7), InlineKeyboardButton('8', callback_data=8), InlineKeyboardButton('9', callback_data=9)], [InlineKeyboardButton('10', callback_data=10), InlineKeyboardButton('0', callback_data=0)]]
+				keyboard = questions.questions[question_index].keyboard
 				reply_markup = InlineKeyboardMarkup(keyboard)
 				context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text=questions.questions[question_index].question_text, reply_markup=reply_markup)
 			else:
@@ -73,6 +75,7 @@ def echo(update, context):
 			context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text='Тестирование завершено')
 			context.user_data['is_testing'] = False
 			lst = create_data_list(context.user_data['answers'])
+			print('data list', lst)
 			load_model = get_model()
 			result = load_model(lst)
 			prediction = round(result[0][1].item() * 100, 2)

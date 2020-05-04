@@ -14,9 +14,10 @@ def create_keyboard(buttons, num_buttons_per_row):
 		keyboard.append(row)
 
 	additional_row = []
-	k -= 1
+	#k -= 1
 	for i in range(num_additional_buttons):
 		additional_row.append(InlineKeyboardButton(labels[k + i], callback_data=values[k + i]))
+	keyboard.append(additional_row)
 
 	return keyboard
 
