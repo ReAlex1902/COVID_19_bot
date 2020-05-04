@@ -36,13 +36,13 @@ def start(update, context): # handles /start command which is sent automaticly w
 	print('Start callback has been called')
 	#print('Saved user data', context.user_data)
 	#print('Update object: ', update)
-	update.message.reply_text('Добро пожаловать в COVID-19 diagnostic bot. \n\n \
+	update.message.reply_text('Добро пожаловать в COVID-19 diagnostic bot. \n\n\
 	Данный бот задаст вам несколько вопросов, которые помогут оценить врачам оценить ваше состояние Коронавирусом. \
-	Также, когда вы закончите вводить свои данные, бот вычислит вероятность заболевания. \n\n \
-	Пожалуйста, отвечайте на вопросы честно. \n\n \
-	Для работы с ботом, вы можете использовать следующие команды: \n \
-	/test - начать тестирование, \n \
-	/help - справка по боту. \n\n \
+	Также, когда вы закончите вводить свои данные, бот вычислит вероятность заболевания. \n\n\
+	Пожалуйста, отвечайте на вопросы честно. \n\n\
+	Для работы с ботом, вы можете использовать следующие команды: \n\
+	/test - начать тестирование, \n\
+	/help - справка по боту. \n\n\
 	Берегите себя.')
 
 def test(update, context): # handles /test command
