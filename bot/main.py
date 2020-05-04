@@ -47,7 +47,7 @@ def start(update, context): # handles /start command which is sent automaticly w
 
 def test(update, context): # handles /test command
 	update.message.reply_text('Тестирование начато.')
-	update.message.reply_text('На вопросы ниже отвечайте по шкале от 0 до 10. Если явно не сказано другое.')
+	update.message.reply_text('На вопросы ниже отвечайте по шкале от 0 до 10, если явно не сказано другое.')
 	context.user_data['is_testing'] = True
 	context.user_data['question_index'] = 0
 	context.user_data['answers'] = {}
