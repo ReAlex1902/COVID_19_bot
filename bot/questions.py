@@ -8,7 +8,7 @@ questions.append(question.Question('Есть ли у вас кашель? (0 - �
 questions.append(question.Question('Беспокоит ли вас отдышка? (0 - нет, 10 - очень сильная)', 'shortness_of_breath', 'bool', keyboards.range_selector))
 questions.append(question.Question('Есть ли у вас головная боль?(0 - нет совсем, 10 - очень сильная)', 'head_ache', 'bool', keyboards.range_selector))
 questions.append(question.Question('Болит ли у вас горло? (0 - не болит совсем, 10 - сильная боль)', 'sore_throat', 'bool', keyboards.range_selector))
-questions.append(question.Question('Укажите ваш возраст', 'age', 'bool', keyboards.yes_no))
+questions.append(question.Question('Укажите ваш возраст', 'age', 'text'))
 questions.append(question.Question('Какой ваш пол?', 'gender', 'bool', keyboards.gender_selector))
 
 
