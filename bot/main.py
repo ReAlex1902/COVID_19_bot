@@ -14,7 +14,7 @@ def create_data_list(dic):
 	lst.append(dic['sore_throat'])
 	lst.append(dic['shortness_of_breath'])
 	lst.append(dic['head_ache'])
-	lst.append(dic['age_60_and_above'])
+	lst.append(dic['age'])
 	lst.append(dic['gender'])
 	lst.append(0) # I hav no clue what the last parameter is. When I figure it out. I'll add it to the questions. For now it's just zero
 	return lst
@@ -30,7 +30,14 @@ def start(update, context): # handles /start command which is sent automaticly w
 	print('Start callback has been called')
 	#print('Saved user data', context.user_data)
 	#print('Update object: ', update)
-	update.message.reply_text('Добро пожаловать в COVID19VirusHackBot. Данный бот задаст вам несколько вопросов, которые помогут оценить врачам болете ли вы Коронавирусом или нет. Также, когда вы закончите отвечать на вопросы, то бот вычислит вероятность того, а есть ли у вас вирус. Пожалуйста, отвечайте на вопросы честно. Для работы с ботом, вы можете использовать следующие команды: /test - начать тестирование, /help - справка по боту. Берегите себя.')
+	update.message.reply_text('Добро пожаловать в COVID-19 diagnostic bot. \n\n \
+	Данный бот задаст вам несколько вопросов, которые помогут оценить врачам оценить ваше состояние Коронавирусом. \
+	Также, когда вы закончите вводить свои данные, бот вычислит вероятность заболевания. \n\n \
+	Пожалуйста, отвечайте на вопросы честно. \n\n \
+	Для работы с ботом, вы можете использовать следующие команды: \n \
+	/test - начать тестирование, \n \
+	/help - справка по боту. \n\n \
+	Берегите себя.')
 
 def test(update, context):
 	update.message.reply_text('Тестирование начато.')
@@ -83,7 +90,7 @@ def echo(update, context):
 			print('prediction', result[0][1].item())
 			context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text=report)
 	else:
-		update.message.reply_text('Напичатайте /test, что бы начать тестирование')
+		update.message.reply_text('Напечатайте /test, что бы начать тестирование')
 
 def error(update, context):
 	print('error: ', context.error)
@@ -105,4 +112,7 @@ def main():
 	updater.start_polling()
 	updater.idle()
 
-main()
+# TODO: write ifmain
+
+if __name__ == '__main__':
+	main()
