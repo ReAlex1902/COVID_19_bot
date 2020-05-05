@@ -6,13 +6,22 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
 
 class Question:
-	#Question constructor
-	#parameters:
-# question_text - text of your question
-	#internal_name - name of your question in English is used to add questions to results
-	#answer_type - type of an answer can be bool or text
-	# keyboard - if you want to add buttons to your question, please pick one of prebuilt keyboards from keyboards.py
+	""" If you want to add questions. You have to create an instance of this class for each question. See an example in questions.py
+	methods
+	---------
+	__init__ - constructor
+	"""
+
 	def __init__(self, question_text, internal_name, answer_type, keyboard = None):
+		""" constructor
+		parameters
+---------
+self : object : instance of this class,
+		question_text : str : text of your question,
+		internal_name : str : this name is used to add a question to answers dictionary,
+		answer_type : str : type of your question's answer can be int (number), choice (keyboard will be attached), text (a regular string),
+		keyboard : telegram.InlineKeyboardButton : if you want to attach a keyboard to your question, pick one from keyboards.py or create it on your own
+		"""
 		self.question_text = question_text
 		self.internal_name = internal_name
 		self.answer_type = answer_type
