@@ -8,6 +8,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 from telegram import InlineKeyboardButton
 
 def create_keyboard(buttons, num_buttons_per_row):
+	""" Use this function to create your custom inline keyboard. See examples in keyboards.py """
 	keyboard = []
 	labels = list(buttons.values())
 	values = list(buttons.keys())

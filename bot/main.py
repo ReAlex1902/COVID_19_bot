@@ -42,7 +42,8 @@ def create_report(prediction, answers):
 	return report
 
 # Handlers
-def start(update, context): # handles /start command which is sent automaticly when you write to the bot
+def start(update, context):
+	""" This function handles /start command """
 	update.message.reply_text('Добро пожаловать в COVID-19 diagnostic bot. \n\n\
 	Данный бот задаст вам несколько вопросов, которые помогут оценить врачам ваше состояние. \
 	Также, когда вы закончите вводить свои данные, бот вычислит вероятность заболевания. \n\n\
@@ -66,8 +67,10 @@ def test(update, context): # handles /test command
 	context.chat_data['message_id'] = message_id
 	context.chat_data['chat_id'] = chat_id
 
-def echo(update, context): # Handles all messages and buttons
+def echo(update, context):
+	""" Handles all messages and buttons """
 	if 'is_testing' in context.user_data and context.user_data['is_testing'] == True:
+		question_index = context.user_data['question_index']
 		message = update.message
 		answer = None
 		if update.callback_query != None:
@@ -76,14 +79,17 @@ def echo(update, context): # Handles all messages and buttons
 			message = update.callback_query.message
 		else:
 			answer = update.message.text
+			if questions[question_index].answer_type == 'int':
+				if not answer.isdigit():
+					message.reply_text('Ответ должен быть напечатан одним числом')
+					return
 			context.chat_data['message_id'] = -1
 			context.chat_data['chat_id'] = -1
-		question_index = context.user_data['question_index']
 		context.user_data['answers'][questions[question_index].internal_name] = answer
 		question_index = question_index + 1
 		context.user_data['question_index'] = question_index
 		if question_index <= len(questions) - 1:
-			if questions[question_index].answer_type == 'bool':
+			if questions[question_index].answer_type == 'choice':
 				keyboard = questions[question_index].keyboard
 				reply_markup = InlineKeyboardMarkup(keyboard)
 				if context.chat_data['message_id'] != -1 and context.chat_data['chat_id'] != -1:
