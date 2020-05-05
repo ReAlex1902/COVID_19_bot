@@ -28,7 +28,7 @@ def create_data_list(dic):
 
 def create_report(prediction, answers):
 	""" This function creates the report for a user based on prediction from the model """
-	report = 'Вы больны с вероятностью '
+	report = 'На сегодняшний день ваша вероятность заболевания составляет '
 	report += str(prediction)
 	report += '%'
 	report += '\n\n Рекомендации: \n'
