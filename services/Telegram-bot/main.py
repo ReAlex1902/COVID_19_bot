@@ -105,10 +105,14 @@ def echo(update, context):
 			context.user_data['is_testing'] = False
 			result = requests.post(url='http://localhost:5000/api/predict?token=123', data=json.dumps(context.user_data['answers']))
 			
-			result = result.json()
-			prediction = result['data']['prediction']
-			prediction = round(prediction * 100, 2)
-			report = create_report(prediction, {})
+			report = ''
+			if result.status_code == 200:
+				result = result.json()
+				prediction = result['data']['prediction']
+				prediction = round(prediction * 100, 2)
+				report = create_report(prediction, {})
+			else:
+				report = 'Произошла ошибка при обработке запроса. Техническая служба уведомлена об этом и исправит данную ошибку на столько быстро, на сколько это возможно. Попробуйте ещё раз через несколько часов'
 			context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text=report)
 	else:
 		update.message.reply_text('Напечатайте /test, что бы начать тестирование')
