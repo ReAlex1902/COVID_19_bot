@@ -1,4 +1,4 @@
-from api import api_bp
+from views import api_bp
 from flask import Flask
 app = Flask(__name__)
 def main():
