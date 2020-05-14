@@ -4,10 +4,10 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
-
+import json
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, DictPersistence, CallbackQueryHandler
-import pickle
+import requests
 from questions import questions # A module which holds all questions. Then they will be moved to a database
 import keyboards # This module has a lot of prebuilt keyboards. It is also a good example for Keyboard.py class
 import config # Bot's settings
@@ -103,13 +103,12 @@ def echo(update, context):
 		else:
 			context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text='Тестирование завершено')
 			context.user_data['is_testing'] = False
-			lst = create_data_list(context.user_data['answers'])
-			print([lst])
-			rf = pickle.load(open('Random_Forest.sav', 'rb'))
-			result = rf.predict_proba([lst])
-			prediction = round(result[0][1].item() * 100, 2)
+			result = requests.post(url='http://localhost:5000/api/predict?token=123', data=json.dumps(context.user_data['answers']))
+			
+			result = result.json()
+			prediction = result['data']['prediction']
+			prediction = round(prediction * 100, 2)
 			report = create_report(prediction, {})
-			print('prediction', result[0][1].item())
 			context.bot.edit_message_text(chat_id=context.chat_data['chat_id'], message_id=context.chat_data['message_id'], text=report)
 	else:
 		update.message.reply_text('Напечатайте /test, что бы начать тестирование')
