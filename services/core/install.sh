@@ -1,5 +1,5 @@
 #!/bin/bash
 
 # Installing required Python packages
-pip install flask sklearn
+pip install flask sklearn flask-mysqldb
 
