@@ -60,6 +60,67 @@ API документация
 </tr>
 </tbody>
 </table>
+<h2 id="methods"> Методы </h2>
+<h3 id="predict"> /api/predict </h3>
+<p>
+Используйте данный метод, что бы получить вероятность заболевания.
+</p>
+<p>
+Отправьте симптомы в теле POST запроса.
+<table>
+<caption>
+Необходимые JSON поля
+</caption>
+<thead>
+<th> Имя поля </th>
+<th> Тип поля </th>
+<th> Возможные значения </th>
+<th> Описание </th>
+</thead>
+<tbody>
+<tr>
+<td> patient_id </td>
+<td> int </td>
+<td> 0-32767 </td>
+<td> ID пациента </td>
+</tr>
+<tr>
+<td> fever </td>
+<td> int </td>
+<td> 0-10 </td>
+<td> Температура </td>
+</tr>
+<tr>
+<td> cough </td>
+<td> int </td>
+<td> 0-5 </td>
+<td> Кашель </td>
+</tr>
+<tr>
+<td> shortness_of_breath </td>
+<td> int </td>
+<td> 0-4 </td>
+<td> Одышка </td>
+</tr>
+<tr>
+<td> head_ache </td>
+<td> int </td>
+<td> 0-5 </td>
+<td> Головная боль </td>
+</tr>
+<tr>
+<td> sore_throat </td>
+<td> int </td>
+<td> 0-5 </td>
+<td> Боль горла </td>
+</tr>
+<tr>
+<td> additional_factor </td>
+<td> int </td>
+<td> 0-2 </td>
+</tr>
+</tbody>
+</table>
 
 </body>
 </html>
